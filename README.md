@@ -28,3 +28,4 @@ or
 #### Mesh Placer mode
 - Add support and widget for bitmasking all `3D Physics` layers
 - Add support for broken toggle options
+- Add area paint tool with adjustable area size
