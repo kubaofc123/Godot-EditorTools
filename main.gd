@@ -15,8 +15,10 @@ func _enter_tree():
 		
 	#print("Editor Mode: _enter_tree()")
 	var toolbarString = self.get_script().get_path().get_base_dir() + "/toolbar.tscn"
+	var toolbarScript = load(self.get_script().get_path().get_base_dir() + "/toolbar.gd")
 	var toolbar_ref = load(toolbarString)
 	toolbar = toolbar_ref.instantiate()
+	toolbar.set_script(toolbarScript)
 	add_control_to_bottom_panel(toolbar, "Editor Mode")
 	scene_changed.connect(_on_scene_changed)
 	eds.selection_changed.connect(_on_selection_changed)

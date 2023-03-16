@@ -1,12 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://mhto732xwkik"]
-
-[ext_resource type="Script" path="res://addons/editor_extensions/toolbar.gd" id="1_xa18b"]
+[gd_scene format=3 uid="uid://mhto732xwkik"]
 
 [node name="toolbar" type="HBoxContainer"]
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
-script = ExtResource("1_xa18b")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 2
