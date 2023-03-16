@@ -6,13 +6,14 @@ var selectedObject = null
 var currentRoot
 var eds = get_editor_interface().get_selection()
 var selected_node
+var LMB_down : bool = false
 
 func _enter_tree():
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return
 		
-	print("Editor Mode: _enter_tree()")
+	#print("Editor Mode: _enter_tree()")
 	var toolbar_ref = load("res://addons/editor_extensions/toolbar.tscn")
 	toolbar = toolbar_ref.instantiate()
 	add_control_to_bottom_panel(toolbar, "Editor Mode")
@@ -24,23 +25,27 @@ func _exit_tree():
 	if !Engine.is_editor_hint():
 		return
 		
-	print("Editor Mode: _exit_tree()")
+	#print("Editor Mode: _exit_tree()")
 	#remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_BOTTOM, toolbar)
 	remove_control_from_bottom_panel(toolbar)
 	toolbar.queue_free()
 
 func _make_visible(visible : bool):
+	return
+	
 	# Exit conditions
-	if !Engine.is_editor_hint():
-		return
-		
-	print("Editor Mode: _make_visible() : ", visible)
-	if visible:
-		toolbar.visible = true
-	else:
-		toolbar.visible = false
+	#if !Engine.is_editor_hint():
+	#	return
+	
+	#print("Editor Mode: _make_visible() : ", visible)
+	#if visible:
+	#	toolbar.visible = true
+	#else:
+	#	toolbar.visible = false
 
 func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
+	#print("Editor Mode: _forward_3d_gui_input()")
+	
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
@@ -51,22 +56,20 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 				var hitResult = ray_trace(viewport_camera)
 				if hitResult.is_empty():
 					return EditorPlugin.AFTER_GUI_INPUT_PASS
-				print (toolbar.objectRef)
-				if !toolbar.objectRef:
-					return EditorPlugin.AFTER_GUI_INPUT_PASS
+				#print (toolbar.objectRef)
+				#if !toolbar.objectRef:
+				#	return EditorPlugin.AFTER_GUI_INPUT_PASS
 				var newObjectInstance = toolbar.objectRef.instantiate()
-				if is_instance_valid(newObjectInstance):
-					print("Editor Mode: newObjectInstance is valid: ", newObjectInstance)
-				get_tree().get_edited_scene_root().add_child(newObjectInstance)
-				#selected_node.add_child(newObjectInstance)
-				print("Editor Mode: Setting instance owner to: ", get_tree().get_edited_scene_root())
+				#if is_instance_valid(newObjectInstance):
+					#print("Editor Mode: newObjectInstance is valid: ", newObjectInstance)
+				#get_tree().get_edited_scene_root().add_child(newObjectInstance)
+				get_editor_interface().get_selection().get_selected_nodes()[0].add_child(newObjectInstance)
+				#print("Editor Mode: Setting instance owner to: ", get_tree().get_edited_scene_root())
 				newObjectInstance.set_owner(get_tree().get_edited_scene_root())
 				#newObjectInstance.set_owner(selected_node)
 				newObjectInstance.global_transform.origin = hitResult.position
-				EditorPlugin.AFTER_GUI_INPUT_STOP
-				#else:
-				#	print("Editor Mode: objectRef is not valid")
-				print("Editor Mode: Input: Stop")
+				#print("Editor Mode: Input: Stop")
+				return EditorPlugin.AFTER_GUI_INPUT_STOP
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
 
@@ -85,7 +88,7 @@ func _on_scene_changed(node : Node):
 	if !Engine.is_editor_hint():
 		return
 		
-	print("Editor Mode: _on_scene_changed: ", node)
+	#print("Editor Mode: _on_scene_changed: ", node)
 	currentRoot = node
 
 func ray_trace(viewport_camera: Camera3D) -> Dictionary:
@@ -118,6 +121,11 @@ func _on_selection_changed():
 	if not selected.is_empty():
 		# Always pick first node in selection
 		var selected_node = selected[0]
-		print("Editor Mode: Selected node: ", selected_node)
+		#print("Editor Mode: Selected node: ", selected_node)
 	else:
 		selected_node = null
+
+#func _physics_process(delta: float):
+	#if toolbar.get_node("OptionButton_PlaceMode") == 1:
+		#pass
+		#print("AAAAAAA")
