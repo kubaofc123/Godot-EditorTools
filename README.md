@@ -14,8 +14,14 @@ Clone repository to your `{project-path}/addons/{this-plugin-name}` and activate
 
 ## Limitations
 
-- `Mesh Placer` - currently only tracing for `3D Physics` -> `Layer1`
+#### Mesh Placer mode
+- Currently only tracing for `3D Physics` -> `Layer1`
+- `Continous` mode not working
+- `Align to normal` option not working
+- Random rotation options not working
 
-## To-Do
+## Roadmap
 
-- `Mesh Placer` - add support and widget for bitmasking all `3D Physics` layers
+#### Mesh Placer mode
+- Add support and widget for bitmasking all `3D Physics` layers
+- Add support for broken toggle options
