@@ -1,5 +1,3 @@
-# Copyright 2023 Firewind Games. All rights reserved.
-
 @tool
 extends HBoxContainer
 
