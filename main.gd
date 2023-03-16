@@ -14,7 +14,8 @@ func _enter_tree():
 		return
 		
 	#print("Editor Mode: _enter_tree()")
-	var toolbar_ref = load("res://addons/editor_extensions/toolbar.tscn")
+	var toolbarString = self.get_script().get_path().get_base_dir() + "/toolbar.tscn"
+	var toolbar_ref = load(toolbarString)
 	toolbar = toolbar_ref.instantiate()
 	add_control_to_bottom_panel(toolbar, "Editor Mode")
 	scene_changed.connect(_on_scene_changed)
