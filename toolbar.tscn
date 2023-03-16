@@ -74,7 +74,7 @@ layout_mode = 2
 text = " Align to 
 normal: "
 
-[node name="CheckButton_Align" type="CheckButton" parent="Modes/Mode_MeshPlacer/HBoxContainer"]
+[node name="CB_Align" type="CheckButton" parent="Modes/Mode_MeshPlacer/HBoxContainer"]
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Modes/Mode_MeshPlacer"]
@@ -88,7 +88,7 @@ layout_mode = 2
 layout_mode = 2
 text = " Random X rotation: "
 
-[node name="CheckButton_RandX" type="CheckButton" parent="Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer2"]
+[node name="CB_RandX" type="CheckButton" parent="Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Modes/Mode_MeshPlacer/VBoxContainer"]
@@ -98,7 +98,7 @@ layout_mode = 2
 layout_mode = 2
 text = " Random Y rotation: "
 
-[node name="CheckButton_RandX2" type="CheckButton" parent="Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer3"]
+[node name="CB_RandY" type="CheckButton" parent="Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="Modes/Mode_MeshPlacer/VBoxContainer"]
@@ -108,7 +108,7 @@ layout_mode = 2
 layout_mode = 2
 text = " Random Z rotation: "
 
-[node name="CheckButton_RandX3" type="CheckButton" parent="Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer4"]
+[node name="CB_RandZ" type="CheckButton" parent="Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer4"]
 layout_mode = 2
 
 [connection signal="draw" from="." to="." method="_on_draw"]

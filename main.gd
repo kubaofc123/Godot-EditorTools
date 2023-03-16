@@ -7,6 +7,7 @@ var currentRoot
 var eds = get_editor_interface().get_selection()
 var selected_node
 var LMB_down : bool = false
+var rng
 
 func _enter_tree():
 	# Exit conditions
@@ -20,8 +21,21 @@ func _enter_tree():
 	toolbar = toolbar_ref.instantiate()
 	toolbar.set_script(toolbarScript)
 	add_control_to_bottom_panel(toolbar, "Editor Mode")
+	
+	#Modes/Mode_MeshPlacer/HBoxContainer/CB_Align
+	
+	# Handle toolbar script and signals
 	scene_changed.connect(_on_scene_changed)
 	eds.selection_changed.connect(_on_selection_changed)
+	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer2/CB_RandX").toggled.connect(toolbar._on_randX_toggled)
+	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer3/CB_RandY").toggled.connect(toolbar._on_randY_toggled)
+	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer4/CB_RandZ").toggled.connect(toolbar._on_randZ_toggled)
+	#toolbar.check_randY.toggled.connect(toolbar._on_randY_toggled)
+	#toolbar.check_randZ.toggled.connect(toolbar._on_randZ_toggled)
+	
+	# Create RNG
+	rng = RandomNumberGenerator.new()
+	rng.randomize()
 
 func _exit_tree():
 	# Exit conditions
@@ -29,7 +43,6 @@ func _exit_tree():
 		return
 		
 	#print("Editor Mode: _exit_tree()")
-	#remove_control_from_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_BOTTOM, toolbar)
 	remove_control_from_bottom_panel(toolbar)
 	toolbar.queue_free()
 
@@ -62,15 +75,29 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 				#print (toolbar.objectRef)
 				#if !toolbar.objectRef:
 				#	return EditorPlugin.AFTER_GUI_INPUT_PASS
+				
+				# Spawn object
 				var newObjectInstance = toolbar.objectRef.instantiate()
-				#if is_instance_valid(newObjectInstance):
-					#print("Editor Mode: newObjectInstance is valid: ", newObjectInstance)
-				#get_tree().get_edited_scene_root().add_child(newObjectInstance)
 				get_editor_interface().get_selection().get_selected_nodes()[0].add_child(newObjectInstance)
-				#print("Editor Mode: Setting instance owner to: ", get_tree().get_edited_scene_root())
 				newObjectInstance.set_owner(get_tree().get_edited_scene_root())
-				#newObjectInstance.set_owner(selected_node)
 				newObjectInstance.global_transform.origin = hitResult.position
+				
+				# Handle object rotation
+				if toolbar.brandX or toolbar.brandY or toolbar.brandZ:
+					var frandX : float = 0.0
+					var frandY : float = 0.0
+					var frandZ : float = 0.0
+					if toolbar.brandX:
+						frandX = rng.randf_range(0, 360)
+					if toolbar.brandY:
+						frandY = rng.randf_range(0, 360)
+					if toolbar.brandZ:
+						frandZ = rng.randf_range(0, 360)
+					#print("Editor Mode: randX: ", toolbar.brandX, ", frandX: ", frandX)
+					#print("Editor Mode: randY: ", toolbar.brandY, ", frandY: ", frandY)
+					#print("Editor Mode: randZ: ", toolbar.brandZ, ", frandZ: ", frandZ)
+					newObjectInstance.global_rotation = Vector3(frandX, frandY, frandZ)
+					
 				#print("Editor Mode: Input: Stop")
 				return EditorPlugin.AFTER_GUI_INPUT_STOP
 		return EditorPlugin.AFTER_GUI_INPUT_PASS

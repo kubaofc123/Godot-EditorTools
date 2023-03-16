@@ -1,11 +1,16 @@
 @tool
 extends HBoxContainer
 
+# Widget references
 @onready var optionsButton = $OptionButton
 @onready var modes = $Modes
 @onready var mode_meshplacer = $Modes/Mode_MeshPlacer
 @onready var mesh_ref_textbox = $Modes/Mode_MeshPlacer/VBoxContainer2/HBoxContainer2/MeshRef
+
 var objectRef
+var brandX : bool = false
+var brandY : bool = false
+var brandZ : bool = false
 
 func _ready():
 	modes.visible = false
@@ -40,3 +45,15 @@ func _on_mesh_ref_text_changed(new_text):
 			#print("Editor Mode Toolbar: Mesh reference submitted: ", objectRef)
 	else:
 			objectRef = null
+
+func _on_randX_toggled(button_pressed : bool):
+	#print("Editor Mode Toolbar: _on_randX_toggled():", button_pressed)
+	brandX = button_pressed
+
+func _on_randY_toggled(button_pressed : bool):
+	#print("Editor Mode Toolbar: _on_randY_toggled():", button_pressed)
+	brandY = button_pressed
+	
+func _on_randZ_toggled(button_pressed : bool):
+	#print("Editor Mode Toolbar: _on_randZ_toggled():", button_pressed)
+	brandZ = button_pressed
