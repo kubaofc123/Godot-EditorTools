@@ -21,7 +21,6 @@ or
 - Currently only tracing for `3D Physics` -> `Layer1`
 - `Continous` mode not working
 - `Align to normal` option not working
-- Random rotation options not working
 - When creating a new scene, which has no root node set, `Mesh Placer` does not work until root node is set, scene saved and editor switched to another scene and back
 ## Roadmap
 
