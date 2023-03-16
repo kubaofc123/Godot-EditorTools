@@ -22,7 +22,7 @@ or
 - `Continous` mode not working
 - `Align to normal` option not working
 - Random rotation options not working
-
+- When creating a new scene, which has no root node set, `Mesh Placer` does not work until root node is set, scene saved and editor switched to another scene and back
 ## Roadmap
 
 #### Mesh Placer mode
