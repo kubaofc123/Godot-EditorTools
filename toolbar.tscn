@@ -1,0 +1,60 @@
+[gd_scene load_steps=2 format=3 uid="uid://mhto732xwkik"]
+
+[ext_resource type="Script" path="res://addons/editor_extensions/toolbar.gd" id="1_xa18b"]
+
+[node name="toolbar" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_xa18b")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Mode:
+"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "Regular"
+popup/item_0/id = 0
+popup/item_1/text = "Mesh Placer"
+popup/item_1/id = 1
+
+[node name="Modes" type="PanelContainer" parent="."]
+visible = false
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Mode_MeshPlacer" type="HBoxContainer" parent="Modes"]
+layout_mode = 2
+
+[node name="Label_Mesh" type="Label" parent="Modes/Mode_MeshPlacer"]
+layout_mode = 2
+text = "     Mesh: "
+
+[node name="MeshRef" type="LineEdit" parent="Modes/Mode_MeshPlacer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+
+[node name="Label_PlaceMode" type="Label" parent="Modes/Mode_MeshPlacer"]
+layout_mode = 2
+text = "     Place mode: "
+
+[node name="OptionButton" type="OptionButton" parent="Modes/Mode_MeshPlacer"]
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "Add"
+popup/item_0/id = 0
+popup/item_1/text = "Subtract"
+popup/item_1/id = 1
+
+[connection signal="draw" from="." to="." method="_on_draw"]
+[connection signal="ready" from="." to="." method="_on_ready"]
+[connection signal="tree_entered" from="." to="." method="_on_tree_entered"]
+[connection signal="item_selected" from="OptionButton" to="." method="_on_option_button_item_selected"]
+[connection signal="text_submitted" from="Modes/Mode_MeshPlacer/MeshRef" to="." method="_on_mesh_ref_text_submitted"]
