@@ -12,6 +12,8 @@ This adds `Editor Mode` in the bottom panel, which will contain different editor
 or
 - Download zip and extract it to `{project-path}/addons/` and activate the plugin in `Project->Project Settings->Plugins->Editor Extenstions`, then restart the editor
 
+If you use Git, you can add this repository as a submodule in order to receive automatic updates
+
 ## How to use
 - `Mesh Placer` - Select any `Node3D` type-derived object in Scene tab. This will be the parent for added scenes by this mode. In object path copy path to the scene you need to spawn. In this mode you cannot select any objects in the viewport.
 
