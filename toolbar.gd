@@ -6,6 +6,8 @@ extends HBoxContainer
 @onready var modes = $Modes
 @onready var mode_meshplacer = $Modes/Mode_MeshPlacer
 @onready var mesh_ref_textbox = $Modes/Mode_MeshPlacer/VBoxContainer2/HBoxContainer2/MeshRef
+@onready var vbox_frequency = $Modes/Mode_MeshPlacer/VBox_Frequency
+@onready var frequency_spinbox = $Modes/Mode_MeshPlacer/VBox_Frequency/SpinBox
 
 var objectRef
 var brandX : bool = false
@@ -21,6 +23,7 @@ enum MeshPlacerPlaceModeEnum {SINGLE = 0, CONTINOUS = 1}
 
 func _ready():
 	modes.visible = false
+	_on_mesh_placer_place_mode_selected(0)
 
 func _on_option_button_item_selected(index):
 	currentEditorMode = index
@@ -68,3 +71,7 @@ func _on_align_to_normal_toggled(button_pressed : bool):
 
 func _on_mesh_placer_place_mode_selected(index : int):
 	currentMeshPlacerPlaceMode = index
+	if currentMeshPlacerPlaceMode == MeshPlacerPlaceModeEnum.SINGLE:
+		vbox_frequency.visible = false
+	if currentMeshPlacerPlaceMode == MeshPlacerPlaceModeEnum.CONTINOUS:
+		vbox_frequency.visible = true

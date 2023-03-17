@@ -64,6 +64,26 @@ custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_vertical = 4
 
+[node name="VSeparator" type="VSeparator" parent="Modes/Mode_MeshPlacer"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="VBox_Frequency" type="VBoxContainer" parent="Modes/Mode_MeshPlacer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="Modes/Mode_MeshPlacer/VBox_Frequency"]
+layout_mode = 2
+text = "Place frequency (s)"
+
+[node name="SpinBox" type="SpinBox" parent="Modes/Mode_MeshPlacer/VBox_Frequency"]
+layout_mode = 2
+min_value = 0.01
+max_value = 1.0
+step = 0.01
+value = 0.05
+allow_greater = true
+
 [node name="HBoxContainer" type="HBoxContainer" parent="Modes/Mode_MeshPlacer"]
 layout_mode = 2
 size_flags_vertical = 4

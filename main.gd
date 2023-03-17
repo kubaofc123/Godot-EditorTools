@@ -9,6 +9,10 @@ var selected_node
 var LMB_down : bool = false
 var rng
 
+var place_timer
+var place_cooldown : bool = false
+var player_camera
+
 func _enter_tree():
 	# Exit conditions
 	if !Engine.is_editor_hint():
@@ -29,30 +33,49 @@ func _enter_tree():
 	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer4/CB_RandZ").toggled.connect(toolbar._on_randZ_toggled)
 	toolbar.get_node("Modes/Mode_MeshPlacer/HBoxContainer/CB_Align").toggled.connect(toolbar._on_align_to_normal_toggled)
 	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer2/HBoxContainer/OptionButton_PlaceMode").item_selected.connect(toolbar._on_mesh_placer_place_mode_selected)
+	
 	# Create RNG
 	rng = RandomNumberGenerator.new()
 	rng.randomize()
+	
+	# Create place timer
+	place_timer = Timer.new()
+	add_child(place_timer)
+	place_timer.timeout.connect(_on_place_timer_timeout)
 
 func _exit_tree():		
 	remove_control_from_bottom_panel(toolbar)
 	toolbar.queue_free()
+	place_timer.queue.free()
 
 func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:	
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
-
-	# MESH PLACER Mode
-	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER:
-		if event is InputEventMouseButton:
-			if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
-				var hitResult = ray_trace(viewport_camera)
-				if hitResult.is_empty():
-					return EditorPlugin.AFTER_GUI_INPUT_PASS
-				spawn_object(hitResult)
-				return EditorPlugin.AFTER_GUI_INPUT_STOP
+		
+	# LMB
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+		LMB_down = true
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.is_pressed():
+		LMB_down = false
+		
+	# Mesh Placer Mode, Single place mode
+	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER and toolbar.currentMeshPlacerPlaceMode == toolbar.MeshPlacerPlaceModeEnum.SINGLE:
+		#player_camera = null
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			var hitResult = ray_trace(viewport_camera)
+			if hitResult.is_empty():
+				return EditorPlugin.AFTER_GUI_INPUT_PASS
+			spawn_object(hitResult)
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 	
+	# Mesh Placer Mode, Continous place mode
+	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER and toolbar.currentMeshPlacerPlaceMode == toolbar.MeshPlacerPlaceModeEnum.CONTINOUS:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+			player_camera = viewport_camera
+			return EditorPlugin.AFTER_GUI_INPUT_STOP
+			
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
 
 func _handles(object):
@@ -148,6 +171,15 @@ func spawn_object(hitResult : Dictionary):
 		else:	
 			newObjectInstance.global_rotation = Vector3(frandX, frandY, frandZ)
 	
-func _physics_process(delta: float):
-	pass
-	#if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER
+func _process(delta: float):
+	# Mesh Placer Mode, Continous place mode
+	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER and toolbar.currentMeshPlacerPlaceMode == toolbar.MeshPlacerPlaceModeEnum.CONTINOUS and player_camera and not place_cooldown and LMB_down:
+		print("Editor Mode: Tick passed")
+		var hitResult = ray_trace(player_camera)
+		if not hitResult.is_empty():
+			spawn_object(hitResult)
+		place_cooldown = true
+		place_timer.start(toolbar.frequency_spinbox.value)
+	
+func _on_place_timer_timeout():
+	place_cooldown = false
