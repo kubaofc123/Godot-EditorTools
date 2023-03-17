@@ -29,6 +29,8 @@ If you use Git, you can add this repository as a submodule in order to receive a
 - Currently only tracing for `3D Physics` -> `Layer1`
 - `Continous` mode not working
 - When creating a new scene, which has no root node set, `Mesh Placer` does not work until root node is set, scene saved and editor switched to another scene and back
+- Not working with Undo/Redo system yet
+
 ## Roadmap
 
 #### Mesh Placer mode
