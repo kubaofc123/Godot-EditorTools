@@ -35,5 +35,6 @@ If you use Git, you can add this repository as a submodule in order to receive a
 #### Mesh Placer mode
 - Add support and widget for bitmasking all `3D Physics` layers
 - Add area paint tool with adjustable area size
+- Support for list of items to spawn, which are chosen at random at defined ratios
 
 Feel free to add suggestions for new modes!
