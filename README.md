@@ -27,7 +27,6 @@ If you use Git, you can add this repository as a submodule in order to receive a
 
 #### Mesh Placer mode
 - Currently only tracing for `3D Physics` -> `Layer1`
-- `Continous` mode not working
 - When creating a new scene, which has no root node set, `Mesh Placer` does not work until root node is set, scene saved and editor switched to another scene and back
 - Not working with Undo/Redo system yet
 
@@ -36,6 +35,5 @@ If you use Git, you can add this repository as a submodule in order to receive a
 #### Mesh Placer mode
 - Add support and widget for bitmasking all `3D Physics` layers
 - Add area paint tool with adjustable area size
-- Add support for `Continous` mode
 
 Feel free to add suggestions for new modes!
