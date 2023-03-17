@@ -29,3 +29,5 @@ If you use Git, you can add this repository as a submodule in order to receive a
 - Add support and widget for bitmasking all `3D Physics` layers
 - Add area paint tool with adjustable area size
 - Add support for `Continous` mode
+
+Feel free to add suggestions for modes via the Github Issues tab!
