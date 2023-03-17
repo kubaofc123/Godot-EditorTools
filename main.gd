@@ -28,7 +28,7 @@ func _enter_tree():
 	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer3/CB_RandY").toggled.connect(toolbar._on_randY_toggled)
 	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer4/CB_RandZ").toggled.connect(toolbar._on_randZ_toggled)
 	toolbar.get_node("Modes/Mode_MeshPlacer/HBoxContainer/CB_Align").toggled.connect(toolbar._on_align_to_normal_toggled)
-	
+	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer2/HBoxContainer/OptionButton_PlaceMode").item_selected.connect(toolbar._on_mesh_placer_place_mode_selected)
 	# Create RNG
 	rng = RandomNumberGenerator.new()
 	rng.randomize()
@@ -42,55 +42,17 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 	if !Engine.is_editor_hint():
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
 
-	if toolbar.get_editor_mode() != 0:
+	# MESH PLACER Mode
+	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER:
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 				var hitResult = ray_trace(viewport_camera)
 				if hitResult.is_empty():
 					return EditorPlugin.AFTER_GUI_INPUT_PASS
-
-				# Spawn object
-				var newObjectInstance = toolbar.objectRef.instantiate()
-				get_editor_interface().get_selection().get_selected_nodes()[0].add_child(newObjectInstance)
-				newObjectInstance.set_owner(get_tree().get_edited_scene_root())
-
-				# Handle object normal alignment
-				if toolbar.balignToNormal:
-					var trans := Transform3D()
-					if abs(hitResult.normal.z) == 1:
-						trans.basis.x = Vector3(1,0,0)
-						trans.basis.y = Vector3(0,0,hitResult.normal.z)
-						trans.basis.z = Vector3(0,hitResult.normal.z,0)
-					else:
-						trans.basis.y = hitResult.normal
-						trans.basis.x = hitResult.normal.cross(trans.basis.z)
-						trans.basis.z = trans.basis.x.cross(hitResult.normal)
-						trans.basis = trans.basis.orthonormalized()
-					newObjectInstance.global_transform = trans
-
-				# Handle object location
-				newObjectInstance.global_transform.origin = hitResult.position
-
-				# Handle object rotation
-				if toolbar.brandX or toolbar.brandY or toolbar.brandZ:
-					var frandX : float = 0.0
-					var frandY : float = 0.0
-					var frandZ : float = 0.0
-					if toolbar.brandX:
-						frandX = rng.randf_range(0, 360)
-					if toolbar.brandY:
-						frandY = rng.randf_range(0, 360)
-					if toolbar.brandZ:
-						frandZ = rng.randf_range(0, 360)
-					if toolbar.balignToNormal:
-						newObjectInstance.rotate_object_local(Vector3(1, 0, 0), deg_to_rad(frandX))
-						newObjectInstance.rotate_object_local(Vector3(0, 1, 0), deg_to_rad(frandY))
-						newObjectInstance.rotate_object_local(Vector3(0, 0, 1), deg_to_rad(frandZ))
-					else:	
-						newObjectInstance.global_rotation = Vector3(frandX, frandY, frandZ)
-
+				spawn_object(hitResult)
 				return EditorPlugin.AFTER_GUI_INPUT_STOP
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
+	
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
 
 func _handles(object):
@@ -144,3 +106,48 @@ func _on_selection_changed():
 		#print("Editor Mode: Selected node: ", selected_node)
 	else:
 		selected_node = null
+
+func spawn_object(hitResult : Dictionary):
+	# Spawn object
+	var newObjectInstance = toolbar.objectRef.instantiate()
+	get_editor_interface().get_selection().get_selected_nodes()[0].add_child(newObjectInstance)
+	newObjectInstance.set_owner(get_tree().get_edited_scene_root())
+
+	# Handle object normal alignment
+	if toolbar.balignToNormal:
+		var trans := Transform3D()
+		if abs(hitResult.normal.z) == 1:
+			trans.basis.x = Vector3(1,0,0)
+			trans.basis.y = Vector3(0,0,hitResult.normal.z)
+			trans.basis.z = Vector3(0,hitResult.normal.z,0)
+		else:
+			trans.basis.y = hitResult.normal
+			trans.basis.x = hitResult.normal.cross(trans.basis.z)
+			trans.basis.z = trans.basis.x.cross(hitResult.normal)
+			trans.basis = trans.basis.orthonormalized()
+		newObjectInstance.global_transform = trans
+
+	# Handle object location
+	newObjectInstance.global_transform.origin = hitResult.position
+
+	# Handle object rotation
+	if toolbar.brandX or toolbar.brandY or toolbar.brandZ:
+		var frandX : float = 0.0
+		var frandY : float = 0.0
+		var frandZ : float = 0.0
+		if toolbar.brandX:
+			frandX = rng.randf_range(0, 360)
+		if toolbar.brandY:
+			frandY = rng.randf_range(0, 360)
+		if toolbar.brandZ:
+			frandZ = rng.randf_range(0, 360)
+		if toolbar.balignToNormal:
+			newObjectInstance.rotate_object_local(Vector3(1, 0, 0), deg_to_rad(frandX))
+			newObjectInstance.rotate_object_local(Vector3(0, 1, 0), deg_to_rad(frandY))
+			newObjectInstance.rotate_object_local(Vector3(0, 0, 1), deg_to_rad(frandZ))
+		else:	
+			newObjectInstance.global_rotation = Vector3(frandX, frandY, frandZ)
+	
+func _physics_process(delta: float):
+	pass
+	#if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER

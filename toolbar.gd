@@ -12,26 +12,30 @@ var brandX : bool = false
 var brandY : bool = false
 var brandZ : bool = false
 var balignToNormal : bool = false
+var currentEditorMode : EditorModeEnum = EditorModeEnum.REGULAR
+var currentMeshPlacerPlaceMode : MeshPlacerPlaceModeEnum = MeshPlacerPlaceModeEnum.SINGLE
+
+# Enums
+enum EditorModeEnum {REGULAR = 0, MESH_PLACER = 1}
+enum MeshPlacerPlaceModeEnum {SINGLE = 0, CONTINOUS = 1}
 
 func _ready():
 	modes.visible = false
 
 func _on_option_button_item_selected(index):
-	#print("Editor Mode Toolbar: _on_option_button_item_selected():", index)
-	if index == 0:
+	currentEditorMode = index
+	
+	if currentEditorMode == EditorModeEnum.REGULAR:
 		modes.visible = false
 		return
 		
-	if index == 1:
+	if currentEditorMode == EditorModeEnum.MESH_PLACER:
 		modes.visible = true
 		mode_meshplacer.visible = true
 		if mode_meshplacer.get_node("VBoxContainer2/HBoxContainer/Label_PlaceMode").get_total_character_count() != 0:
 			objectRef = load(mesh_ref_textbox.text)
 		else:
 			objectRef = null		
-
-func get_editor_mode() -> int:
-	return optionsButton.selected
 
 func _on_mesh_ref_text_submitted(new_text):
 	if mode_meshplacer.get_node("VBoxContainer2/HBoxContainer/Label_PlaceMode").get_total_character_count() != 0:
@@ -61,3 +65,6 @@ func _on_randZ_toggled(button_pressed : bool):
 
 func _on_align_to_normal_toggled(button_pressed : bool):
 	balignToNormal = button_pressed
+
+func _on_mesh_placer_place_mode_selected(index : int):
+	currentMeshPlacerPlaceMode = index
