@@ -23,7 +23,6 @@ popup/item_1/text = "Mesh Placer"
 popup/item_1/id = 1
 
 [node name="Modes" type="PanelContainer" parent="."]
-visible = false
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 mouse_filter = 1
@@ -71,8 +70,7 @@ size_flags_vertical = 4
 
 [node name="Label_Align" type="Label" parent="Modes/Mode_MeshPlacer/HBoxContainer"]
 layout_mode = 2
-text = " Align to 
-normal: "
+text = " Align to normal: "
 
 [node name="CB_Align" type="CheckButton" parent="Modes/Mode_MeshPlacer/HBoxContainer"]
 layout_mode = 2
