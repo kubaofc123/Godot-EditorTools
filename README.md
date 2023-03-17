@@ -6,6 +6,10 @@ This adds `Editor Mode` in the bottom panel, which will contain different editor
 
 ![image](https://user-images.githubusercontent.com/17231482/225731162-14b013e4-fc29-4643-ab0a-e89d0daee1d9.png)
 
+Currently supported modes:
+- `Regular` - no change to editor
+- `Mesh Placer` - allows for quick, repeatable object placement in the world using mouse
+
 ## How to install
 - Clone repository to your `{project-path}/addons/{name-this-plugin-somehow}` and activate the plugin in `Project->Project Settings->Plugins->Editor Extenstions`, then restart the editor
 
