@@ -29,6 +29,7 @@ If you use Git, you can add this repository as a submodule in order to receive a
 - Currently only tracing for `3D Physics` -> `Layer1`
 - When creating a new scene, which has no root node set, `Mesh Placer` does not work until root node is set, scene saved and editor switched to another scene and back
 - Not working with Undo/Redo system yet
+- Scenes are not marked as "dirty" when adding meshes
 
 ## Roadmap
 
@@ -36,5 +37,6 @@ If you use Git, you can add this repository as a submodule in order to receive a
 - Add support and widget for bitmasking all `3D Physics` layers
 - Add area paint tool with adjustable area size
 - Support for list of items to spawn, which are chosen at random at defined ratios
+- Add Undo/Redo actions to History tab
 
 Feel free to add suggestions for new modes!
