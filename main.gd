@@ -13,18 +13,20 @@ var place_timer
 var place_cooldown : bool = false
 var player_camera
 
+#==========================================================================
+
 func _enter_tree():
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return
-		
+
 	var toolbarString = self.get_script().get_path().get_base_dir() + "/toolbar.tscn"
 	var toolbarScript = load(self.get_script().get_path().get_base_dir() + "/toolbar.gd")
 	var toolbar_ref = load(toolbarString)
 	toolbar = toolbar_ref.instantiate()
 	toolbar.set_script(toolbarScript)
 	add_control_to_bottom_panel(toolbar, "Editor Mode")
-	
+
 	# Handle toolbar script and signals
 	scene_changed.connect(_on_scene_changed)
 	eds.selection_changed.connect(_on_selection_changed)
@@ -33,32 +35,36 @@ func _enter_tree():
 	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer/HBoxContainer4/CB_RandZ").toggled.connect(toolbar._on_randZ_toggled)
 	toolbar.get_node("Modes/Mode_MeshPlacer/HBoxContainer/CB_Align").toggled.connect(toolbar._on_align_to_normal_toggled)
 	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer2/HBoxContainer/OptionButton_PlaceMode").item_selected.connect(toolbar._on_mesh_placer_place_mode_selected)
-	
+	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer3/HBoxContainer2/VBoxContainer/SpinBox").value_changed.connect(toolbar._on_mesh_scale_min_changed)
+	toolbar.get_node("Modes/Mode_MeshPlacer/VBoxContainer3/HBoxContainer3/VBoxContainer/SpinBox").value_changed.connect(toolbar._on_mesh_scale_max_changed)
+
 	# Create RNG
 	rng = RandomNumberGenerator.new()
 	rng.randomize()
-	
+
 	# Create place timer
 	place_timer = Timer.new()
 	add_child(place_timer)
 	place_timer.timeout.connect(_on_place_timer_timeout)
 
-func _exit_tree():		
+
+func _exit_tree():
 	remove_control_from_bottom_panel(toolbar)
 	toolbar.queue_free()
 	place_timer.queue.free()
 
-func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:	
+
+func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
-		
+
 	# LMB
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 		LMB_down = true
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.is_pressed():
 		LMB_down = false
-		
+
 	# Mesh Placer Mode, Single place mode
 	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER and toolbar.currentMeshPlacerPlaceMode == toolbar.MeshPlacerPlaceModeEnum.SINGLE:
 		#player_camera = null
@@ -69,39 +75,42 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 			spawn_object(hitResult)
 			return EditorPlugin.AFTER_GUI_INPUT_STOP
 		return EditorPlugin.AFTER_GUI_INPUT_PASS
-	
+
 	# Mesh Placer Mode, Continous place mode
 	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER and toolbar.currentMeshPlacerPlaceMode == toolbar.MeshPlacerPlaceModeEnum.CONTINOUS:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 			player_camera = viewport_camera
 			return EditorPlugin.AFTER_GUI_INPUT_STOP
-			
+
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
+
 
 func _handles(object):
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return false
-		
+
 	var castObject = object as Node3D
 	if is_instance_valid(castObject):
 		return true
 	return false
 
+
 func _on_scene_changed(node : Node):
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return
-		
+
 	#print("Editor Mode: _on_scene_changed: ", node)
 	currentRoot = node
+
 
 func ray_trace(viewport_camera: Camera3D) -> Dictionary:
 	# Exit conditions
 	var sceneRoot = get_tree().get_edited_scene_root() as Node3D
 	if !is_instance_valid(sceneRoot):
 		return Dictionary()
-		
+
 	var mousePos = get_viewport().get_mouse_position()
 	mousePos = viewport_camera.get_viewport().get_mouse_position()
 	var rayLength = 10000000000
@@ -115,20 +124,22 @@ func ray_trace(viewport_camera: Camera3D) -> Dictionary:
 	var hitResult = space.intersect_ray(rayQuery)
 	return hitResult
 
+
 func _on_selection_changed():
 	# Exit conditions
 	if !Engine.is_editor_hint():
 		return
-		
+
 	# Returns an array of selected nodes
-	var selected = eds.get_selected_nodes() 
-	
+	var selected = eds.get_selected_nodes()
+
 	if not selected.is_empty():
 		# Always pick first node in selection
 		var selected_node = selected[0]
 		#print("Editor Mode: Selected node: ", selected_node)
 	else:
 		selected_node = null
+
 
 func spawn_object(hitResult : Dictionary):
 	# Spawn object
@@ -168,9 +179,14 @@ func spawn_object(hitResult : Dictionary):
 			newObjectInstance.rotate_object_local(Vector3(1, 0, 0), deg_to_rad(frandX))
 			newObjectInstance.rotate_object_local(Vector3(0, 1, 0), deg_to_rad(frandY))
 			newObjectInstance.rotate_object_local(Vector3(0, 0, 1), deg_to_rad(frandZ))
-		else:	
+		else:
 			newObjectInstance.global_rotation = Vector3(frandX, frandY, frandZ)
-	
+
+	# Object scale
+	var random_scale_mod : float = rng.randf_range(toolbar.mesh_scale_min, toolbar.mesh_scale_max)
+	newObjectInstance.scale = Vector3(random_scale_mod, random_scale_mod, random_scale_mod)
+
+
 func _process(delta: float):
 	# Mesh Placer Mode, Continous place mode
 	if toolbar.currentEditorMode == toolbar.EditorModeEnum.MESH_PLACER and toolbar.currentMeshPlacerPlaceMode == toolbar.MeshPlacerPlaceModeEnum.CONTINOUS and player_camera and not place_cooldown and LMB_down:
@@ -180,6 +196,9 @@ func _process(delta: float):
 			spawn_object(hitResult)
 		place_cooldown = true
 		place_timer.start(toolbar.frequency_spinbox.value)
-	
+
+
 func _on_place_timer_timeout():
 	place_cooldown = false
+
+########################## END OF FILE ##########################
